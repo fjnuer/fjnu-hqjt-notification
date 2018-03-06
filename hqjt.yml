@@ -1,0 +1,24 @@
+# 后勤集团
+site: 'http://hqjt.fjnu.edu.cn'
+certificate: ~
+keywords: 
+   - '停水'
+   - '停电'
+   - '供水'
+   - '供电'
+   - '水压'
+log: 'log.txt'
+page: 'http://hqjt.fjnu.edu.cn/4236/list.htm'
+localdata: 'hqjt.csv'
+subscribers: 
+   '福师大小葵': '543211907@qq.com'
+   'FJNU校会哥哥': '599991974@qq.com'
+smtp:
+   server: 'smtp.qq.com'
+   email: '123456789@qq.com'
+   password: 'aaaabbbbccccdddd'
+mail:
+   subject: '后勤集团新的停水停电通知'
+   from: '订阅提醒'
+headers: 
+   'Referer': 'http://hqjt.fjnu.edu.cn/'

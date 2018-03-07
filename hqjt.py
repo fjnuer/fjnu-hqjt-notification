@@ -23,7 +23,7 @@ import ruamel.yaml
 from bs4 import BeautifulSoup
 
 def get_content(url , headers = None, certificate = None):
-    # 设置一些默认字段
+    # 设置一些请求头部默认字段
     custom_headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0',
         'Accept': 'text/plain, */*',
@@ -33,7 +33,7 @@ def get_content(url , headers = None, certificate = None):
         'Connection': 'keep-alive',
         'Cache-Control': 'no-cache'
     }
-    # 自定义字段，若同名可覆盖默认字段的值
+    # 加入自定义字段，若同名可覆盖默认字段的值
     for h in headers:
         custom_headers[h] = headers[h]
 
@@ -46,8 +46,7 @@ def get_content(url , headers = None, certificate = None):
                 resp = requests.get(url, headers = custom_headers, timeout = random_timeout)
             resp.encoding = 'utf-8'
             break
-
-            except socket.timeout as e:
+        except socket.timeout as e:
             print( '3:', e)
             time.sleep(random.randint(8,15))
 
@@ -80,15 +79,17 @@ def get_notices(data, site, keywords = None):
     i = 0
     for n in titles:
         temp = []
-
+        
         # 获取标题，若存在关键词列表则判断
         title = n.get_text()
         if keywords and not any(s in title for s in keywords):
+            i += 1
             continue
 
         # 获取链接，所需页面都以 list.html 结尾
         link = n.get("href")
         if re.search('list\.htm$', link):
+            i += 1
             continue
         # 一条通知
         temp = [
@@ -137,7 +138,7 @@ def send_mail(smtp_setting, msg_setting, msg_content, recipient):
     message['Subject'] = Header(mail_subject, 'utf-8').encode()
     message['From'] = email_format_addr('%s <%s>' % (mail_from_name, mail_from_addr)) 
     message['To'] =  email_format_addr('%s <%s>' % (mail_to_name, mail_to_addr))
-    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
     try:
         smtp = SMTP_SSL(smtp_server)
         # smtp.set_debuglevel(1) # 开启调试模式，1 开启，0关闭
@@ -151,7 +152,6 @@ def send_mail(smtp_setting, msg_setting, msg_content, recipient):
 
 if __name__ == '__main__':  
     current_path = os.path.split(os.path.realpath(__file__))[0] + '/'
-
     hqjt_yaml_file = current_path + "hqjt.yml"
     with open(hqjt_yaml_file, "r", encoding="utf-8") as docs:  
         try:  
@@ -174,6 +174,7 @@ if __name__ == '__main__':
     smtp_setting    =   alldata['smtp']
     msg_setting     =   alldata['mail']
     
+    # print(recipients[0]['name'])
     # 仅获取网页
     content = get_content(page, headers, certificate)
     # 获取通知列表，若 keywords 列表不为 None，则只输出包含关键词的通知
@@ -196,13 +197,12 @@ if __name__ == '__main__':
             for nn in new_notices:
                 msg_content = msg_content + '<p>%s <a href="%s">%s</a></p>' % (nn[0], nn[2], nn[1])
 
-    # 逐一发送邮件
+    print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     if new_notices:
         recipient = {}
         for r in recipients:
-            recipient['name'] = r
-            recipient['addr'] = recipients[r]
+            recipient['name'] = r['name']
+            recipient['addr'] = r['addr']
             send_mail(smtp_setting, msg_setting, msg_content, recipient)
     else:
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
         print('Nothing to do')

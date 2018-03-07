@@ -11,8 +11,10 @@ log: 'log.txt'
 page: 'http://hqjt.fjnu.edu.cn/4236/list.htm'
 localdata: 'hqjt.csv'
 subscribers: 
-   '福师大小葵': '543211907@qq.com'
-   'FJNU校会哥哥': '599991974@qq.com'
+   - name: '福师大小葵'
+     addr: '543211907@qq.com'
+   - name: 'FJNU校会哥哥'
+     addr: '599991974@qq.com'
 smtp:
    server: 'smtp.qq.com'
    email: '123456789@qq.com'

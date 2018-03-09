@@ -87,12 +87,26 @@ SMTP 设置。以 QQ 邮箱为例：
 
 推荐使用 [Timer](https://wiki.archlinux.org/index.php/Systemd/Timers)，但 crontab 更常用，这里以 crontab 为例。  
 
+1) 每小时访问页面一次。  
 ```
 crontab -e
 ---
 0 * * * * /usr/bin/python /root/hqjt/hqjt.py >> /root/hqjt/log.txt
 ```
 
-每小时访问页面一次。  
+2）每天 8、12、16、20 时访问页面
+```
+crontab -e
+---
+0 8,12,16,20 * * * /usr/bin/python /root/hqjt/hqjt.py >> /root/hqjt/log.txt
+```
 
+### 4、邮件
 
+本项目使用 SMTP 发送邮件，为了确保能够正常收到邮件，建议将发件人的地址添加到**白名单**中。
+
+以下为第一次收到邮件的样例，包含通知页面所有符合关键词的通知。
+
+![](mail.png)
+
+第二次起，只会包含新的通知，请知悉。
